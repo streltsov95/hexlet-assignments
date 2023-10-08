@@ -6,18 +6,14 @@ import java.util.stream.Stream;
 // BEGIN
 class App {
     public static String[][] enlargeArrayImage(String[][] image) {
-        // Увеличение изображения по горизонтали
-        String[][] horizontallyEnlarged = Arrays.stream(image) // Преобразуем исходный двумерный массив в поток подмассивов
-                .map(row -> Arrays.stream(row)) //Преобразуем подмассив (строку) в поток
-                .flatMap(item -> Stream.of(item, item)) // Дублируем каждый элемент преобразовав элемент в поток из двух элементов
-                .toArray(String[][]::new); // Итоговый поток приводим в двумерному массиву
-
-        // Увеличение изображения по вертикали
-        String[][] enlargedImage = Arrays.stream(horizontallyEnlarged) // Преобразуем исходный двумерный массив в поток подмассивов
-                .flatMap(row -> Stream.of(row, row)) // Дублируем каждую строку преобразовав строку в поток из двух строк
-                .toArray(String[][]::new); // Итоговый поток приводим в двумерному массиву
-
-        return enlargedImage;
+        return Arrays.stream(image) // Преобразуем исходный двумерный массив в поток подмассивов
+                .map(row -> Arrays.stream(row) // Преобразуем подмассив (строку) в поток элементов
+                        .flatMap(item -> Stream.of(item, item)) // Каждый элемент преобразуем в поток из двух элементов
+                                                                // и выпрямляем потоки в один
+                        .toArray(String[]::new)) // Преобразуем поток элементов обратно в поток подмассивов (строк)
+                .flatMap(row -> Stream.of(row, row)) // Каждый подмассив преобразуем в поток из двух подмассивов
+                                                     // и выпрямляем потоки в один
+                .toArray(String[][]::new); // Преобразуем поток подмассивов в двумерный массив
     }
 
     public static void main(String[] args) {
