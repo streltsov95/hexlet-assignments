@@ -12,19 +12,17 @@ public class App {
 
         Map<String, String> tempMap = new HashMap<>();
 
-        for(Map.Entry<String, Object> entry : data1.entrySet()) {
-            if (data2.containsKey(entry.getKey()) & data2.get(entry.getKey()).equals(entry.getValue())) {
+        for (Map.Entry<String, Object> entry : data1.entrySet()) {
+            if (data2.containsKey(entry.getKey()) && data2.get(entry.getKey()).equals(entry.getValue())) {
                 tempMap.put(entry.getKey(), "unchanged");
-            }
-            else if (data2.containsKey(entry.getKey()) & !data2.get(entry.getKey()).equals(entry.getValue())) {
+            } else if (data2.containsKey(entry.getKey()) && !data2.get(entry.getKey()).equals(entry.getValue())) {
                 tempMap.put(entry.getKey(), "changed");
-            }
-            else if (!data2.containsKey(entry.getKey())) {
+            } else if (!data2.containsKey(entry.getKey())) {
                 tempMap.put(entry.getKey(), "deleted");
             }
         }
 
-        for(String key : data2.keySet()) {
+        for (String key : data2.keySet()) {
             if (!data1.containsKey(key)) {
                 tempMap.put(key, "added");
             }
@@ -39,17 +37,6 @@ public class App {
         }
 
         return result;
-    }
-
-    public static void main(String[] args) {
-        Map<String, Object> data1 = new HashMap<>();
-        data1.put("two", "own");
-        Map<String, Object> data2 = new HashMap<>();
-        data2.put("one", "eon");
-        Map<String, String> expected = new LinkedHashMap<>();
-        expected.put("one", "added");
-        expected.put("two", "deleted");
-        System.out.println(App.genDiff(data1, data2));
     }
 }
 //END
