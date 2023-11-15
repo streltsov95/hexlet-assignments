@@ -5,6 +5,7 @@ import java.util.Set;
 
 // BEGIN
 class Tag {
+    private static final String  TAG_FORMAT = "<%s%s>";
     private final String name;
     private final Map<String, String> attributes;
 
@@ -38,7 +39,7 @@ class Tag {
     }
 
     public String toString() {
-        return "<%s%s>".formatted(name, stringifyAttributes());
+        return String.format(TAG_FORMAT, name, stringifyAttributes());
     }
 }
 // END

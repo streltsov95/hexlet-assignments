@@ -5,8 +5,9 @@ import java.util.Map;
 
 // BEGIN
 class PairedTag extends Tag {
-    private String tagBody;
-    private List<Tag> childs;
+    private static final String  TAG_FORMAT = "%s%s%s</%s>";
+    private final String tagBody;
+    private final List<Tag> childs;
 
     PairedTag(String name, Map<String, String> attribute, String tagBody, List<Tag> childs) {
         super(name, attribute);
@@ -30,7 +31,7 @@ class PairedTag extends Tag {
 
     @Override
     public String toString() {
-        return "%s%s%s</%s>".formatted(super.toString(), tagBody, stringifyChilds(), getName());
+        return String.format(TAG_FORMAT, super.toString(), tagBody, stringifyChilds(), getName());
     }
 }
 // END
