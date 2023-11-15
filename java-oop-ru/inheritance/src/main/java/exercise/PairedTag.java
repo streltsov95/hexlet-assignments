@@ -15,14 +15,6 @@ class PairedTag extends Tag {
         this.childs = childs;
     }
 
-    public String getTagBody() {
-        return tagBody;
-    }
-
-    public List<Tag> getChilds() {
-        return childs;
-    }
-
     public String stringifyChilds() {
         StringBuilder stringChilds = new StringBuilder();
         childs.forEach(item -> stringChilds.append(item.toString()));
