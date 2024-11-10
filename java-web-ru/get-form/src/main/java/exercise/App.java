@@ -2,9 +2,7 @@ package exercise;
 
 import io.javalin.Javalin;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import exercise.model.User;
 import exercise.dto.users.UsersPage;
@@ -27,7 +25,7 @@ public final class App {
 
         // BEGIN
         app.get("/users", ctx -> {
-            var term = ctx.queryParamAsClass("term", String.class).getOrDefault(null);
+            var term = ctx.queryParam("term");
             List<User> filteredUsers;
             if (term != null) {
                 filteredUsers = USERS.stream()
