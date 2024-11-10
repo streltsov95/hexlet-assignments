@@ -34,15 +34,15 @@ public final class App {
             ctx.render("users/build.jte");
         });
         app.post("/users", ctx -> {
-           var firstName = StringUtils.capitalize(ctx.formParam("firstName").trim());
-           var lastName = StringUtils.capitalize(ctx.formParam("lastName").trim());
-           var email = ctx.formParam("email").trim().toLowerCase();
-           var password = ctx.formParam("password");
-           var encryptedPassword = Security.encrypt(password);
+            var firstName = StringUtils.capitalize(ctx.formParam("firstName").trim());
+            var lastName = StringUtils.capitalize(ctx.formParam("lastName").trim());
+            var email = ctx.formParam("email").trim().toLowerCase();
+            var password = ctx.formParam("password");
+            var encryptedPassword = Security.encrypt(password);
 
-           var user = new User(firstName, lastName, email, encryptedPassword);
-           UserRepository.save(user);
-           ctx.redirect("/users");
+            var user = new User(firstName, lastName, email, encryptedPassword);
+            UserRepository.save(user);
+            ctx.redirect("/users");
         });
         // END
 
