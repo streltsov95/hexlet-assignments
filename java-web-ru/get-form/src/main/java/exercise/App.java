@@ -27,12 +27,12 @@ public final class App {
         app.get("/users", ctx -> {
             var term = ctx.queryParam("term");
             List<User> filteredUsers;
-            if (term != null) {
+            if (term == null) {
+                filteredUsers = USERS;
+            } else {
                 filteredUsers = USERS.stream()
                         .filter(u -> StringUtils.startsWithIgnoreCase(u.getFirstName(), term))
                         .toList();
-            } else {
-                filteredUsers = List.of();
             }
             var page = new UsersPage(filteredUsers, term);
             ctx.render("users/index.jte", model("page", page));
