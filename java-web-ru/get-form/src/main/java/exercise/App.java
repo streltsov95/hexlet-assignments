@@ -26,15 +26,15 @@ public final class App {
         // BEGIN
         app.get("/users", ctx -> {
             var term = ctx.queryParam("term");
-            List<User> filteredUsers;
+            List<User> users;
             if (term == null) {
-                filteredUsers = USERS;
+                users = USERS;
             } else {
-                filteredUsers = USERS.stream()
+                users = USERS.stream()
                         .filter(u -> StringUtils.startsWithIgnoreCase(u.getFirstName(), term))
                         .toList();
             }
-            var page = new UsersPage(filteredUsers, term);
+            var page = new UsersPage(users, term);
             ctx.render("users/index.jte", model("page", page));
         });
         // END
