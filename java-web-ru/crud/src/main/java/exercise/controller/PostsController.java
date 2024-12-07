@@ -19,7 +19,7 @@ public class PostsController {
                 .orElseThrow(() -> new NotFoundResponse("Page not found"));
 
         var page = new PostPage(post);
-        ctx.render(NamedRoutes.postsPath() + "/show.jte", model("page", page));
+        ctx.render("posts/show.jte", model("page", page));
     }
 
     public static void index(Context ctx) {
@@ -29,7 +29,7 @@ public class PostsController {
         var sliceOfPosts = PostRepository.findAll(page, pageSize);
 
         var postPage = new PostsPage(sliceOfPosts, page);
-        ctx.render(NamedRoutes.postsPath() + "/index.jte", model("page", postPage));
+        ctx.render("posts/index.jte", model("page", postPage));
     }
     // END
 }
