@@ -6,7 +6,6 @@ import exercise.dto.posts.PostsPage;
 import exercise.dto.posts.PostPage;
 import exercise.repository.PostRepository;
 
-import exercise.util.NamedRoutes;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 
