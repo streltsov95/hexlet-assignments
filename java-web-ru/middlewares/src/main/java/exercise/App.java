@@ -30,9 +30,9 @@ public final class App {
 
         // BEGIN
         app.after(ctx -> {
-            var responseBody = ctx.body();
-            var encryptedBody = DigestUtils.sha256Hex(responseBody);
-            ctx.header("X-Response-Digest", encryptedBody);
+            var prevBody = ctx.result();
+            var digest = DigestUtils.sha256Hex(prevBody);
+            ctx.header("X-Response-Digest", digest);
         });
         // END
 
