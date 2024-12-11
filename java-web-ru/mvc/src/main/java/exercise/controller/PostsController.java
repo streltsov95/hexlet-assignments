@@ -62,12 +62,14 @@ public class PostsController {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var post = PostRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Post with id = " + id + " not found"));
+
         var page = new EditPostPage(id, post.getName(), post.getBody());
         ctx.render("posts/edit.jte", model("page", page));
     }
 
     public static void update(Context ctx) {
         var id = ctx.pathParamAsClass("id", Long.class).get();
+
         try {
             var name = ctx.formParamAsClass("name", String.class)
                     .check(value -> value.length() >= 2, "Название не должно быть короче двух символов")
@@ -76,12 +78,16 @@ public class PostsController {
             var body = ctx.formParamAsClass("body", String.class)
                     .check(value -> value.length() >= 10, "Пост должен быть не короче 10 символов")
                     .get();
+
             var post = PostRepository.find(id)
                     .orElseThrow(() -> new NotFoundResponse("Post with id = " + id + " not found"));
+
             post.setName(name);
             post.setBody(body);
+
             PostRepository.save(post);
             ctx.redirect(NamedRoutes.postsPath());
+
         } catch (ValidationException e) {
             var name = ctx.formParam("name");
             var body = ctx.formParam("body");
