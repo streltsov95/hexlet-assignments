@@ -15,6 +15,8 @@ public final class App {
         });
 
         // BEGIN
+        app.get(NamedRoutes.rootPath(), ctx -> ctx.redirect(NamedRoutes.buildUserPath()));
+        app.get(NamedRoutes.buildUserPath(), UsersController::build);
         app.post(NamedRoutes.usersPath(), UsersController::create);
         // END
 
