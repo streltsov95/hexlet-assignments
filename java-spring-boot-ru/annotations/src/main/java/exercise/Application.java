@@ -9,13 +9,8 @@ public class Application {
         var address = new Address("London", 12345678);
 
         // BEGIN
-        for (Method method : Address.class.getDeclaredMethods()) {
-            if(method.isAnnotationPresent(Inspect.class)) {
-                try {
-                    method.invoke(address);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        for (Method method : address.getClass().getDeclaredMethods()) {
+            if (method.isAnnotationPresent(Inspect.class)) {
                 System.out.println(String.format(
                         "Method %s returns a value of type %s",
                         method.getName(),
