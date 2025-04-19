@@ -55,11 +55,12 @@ public class Application {
     }
 
     @GetMapping("/posts")
-    public List<Post> index(@RequestParam(defaultValue = "1") String page,
-                            @RequestParam(defaultValue = "10") String limit) {
+    public List<Post> index(
+            @RequestParam(defaultValue = "1") Integer page,
+            @RequestParam(defaultValue = "10") Integer limit) {
         return posts.stream()
-                .skip((Long.parseLong(page) - 1) * Long.parseLong(limit))
-                .limit(Long.parseLong(limit))
+                .skip((page - 1) * limit)
+                .limit(limit)
                 .toList();
     }
     // END
