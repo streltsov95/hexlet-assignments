@@ -23,19 +23,15 @@ public class Application {
 
     // BEGIN
     @Autowired
-    private UserProperties emailsOfAdmins;
+    private UserProperties usersInfo;
 
     @GetMapping("/admins")
-    public List<String> nameOfAdmins() {
-        List<String> result = new ArrayList<>();
-        for (var user : users) {
-            for (var admin : emailsOfAdmins.getAdmins()) {
-                if (admin.equals(user.getEmail())) {
-                    result.add(user.getName());
-                }
-            }
-        }
-        return result.stream()
+    public List<String> getAdmins() {
+        List<String> adminEmails = usersInfo.getAdmins();
+
+        return users.stream()
+                .filter(u -> adminEmails.contains(u.getEmail()))
+                .map(User::getName)
                 .sorted()
                 .toList();
     }
