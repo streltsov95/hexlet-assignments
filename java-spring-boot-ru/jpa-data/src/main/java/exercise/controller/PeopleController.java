@@ -2,12 +2,20 @@ package exercise.controller;
 
 import exercise.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
 import exercise.model.Person;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/people")
@@ -22,21 +30,15 @@ public class PeopleController {
     }
 
     // BEGIN
-    @GetMapping
-    public List<Person> index(
-            @RequestParam(defaultValue = "10") int limit,
-            @RequestParam(defaultValue = "1") int page) {
-        return personRepository.findAll().stream().
-                skip((page - 1) * limit).
-                limit(limit).
-                toList();
+    @GetMapping(path = "")
+    public List<Person> index() {
+        return personRepository.findAll();
     }
 
-    @PostMapping
+    @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
     public Person create(@RequestBody Person person) {
-        personRepository.save(person);
-        return person;
+        return personRepository.save(person);
     }
 
     @DeleteMapping(path = "/{id}")

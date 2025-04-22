@@ -15,17 +15,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "persons")
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Person {
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    @EqualsAndHashCode.Include
-    private Long id;
+    private long id;
 
     private String firstName;
-
     private String lastName;
-
 }
 // END
