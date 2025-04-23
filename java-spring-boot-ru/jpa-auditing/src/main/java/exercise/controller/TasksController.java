@@ -50,8 +50,12 @@ public class TasksController {
     public Task update(@PathVariable long id, @RequestBody Task taskData) {
         var task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task with id " + id + " not found"));
+
         task.setTitle(taskData.getTitle());
         task.setDescription(taskData.getDescription());
+
+        taskRepository.save(task);
+
         return task;
     }
     // END
