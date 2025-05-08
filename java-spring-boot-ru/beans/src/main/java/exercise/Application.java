@@ -8,11 +8,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.time.LocalDateTime;
 
 import exercise.daytime.Daytime;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Scope;
 
 // BEGIN
-
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.context.annotation.RequestScope;
 // END
 
 @SpringBootApplication
@@ -24,14 +23,15 @@ public class Application {
 
     // BEGIN
     @Bean
-    @Scope("prototype")
+    @RequestScope
     public Daytime getDayTime() {
-        var currentTime = LocalDateTime.now().getHour();
-            if (currentTime >= 6 && currentTime < 22) {
-                return new Day();
-            } else {
-                return new Night();
-            }
+        var currentHour = LocalDateTime.now().getHour();
+
+        if (currentHour >= 6 && currentHour < 22) {
+            return new Day();
+        }
+
+        return new Night();
     }
     // END
 }
