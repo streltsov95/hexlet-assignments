@@ -1,6 +1,5 @@
 package exercise.controller;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,25 +66,25 @@ class TaskControllerTest {
 
 
     // BEGIN
-    private static Task task;
-
-    @BeforeEach
-    public void createTask() {
-        task = Instancio.of(Task.class)
+    private Task generateTask() {
+        return Instancio.of(Task.class)
                 .ignore(Select.field(Task::getId))
                 .supply(Select.field(Task::getTitle), () -> faker.lorem().word())
                 .supply(Select.field(Task::getDescription), () -> faker.lorem().sentence(5))
                 .create();
-        taskRepository.save(task);
     }
 
     @Test
     public void testShow() throws Exception {
-        var result = mockMvc.perform(get("/tasks/" + task.getId()))
+        var task = generateTask();
+        taskRepository.save(task);
+
+        var request = get("/tasks/{id}", task.getId());
+        var result = mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andReturn();
-
         var body = result.getResponse().getContentAsString();
+
         assertThatJson(body).and(
                 a -> a.node("title").isEqualTo(task.getTitle()),
                 a -> a.node("description").isEqualTo(task.getDescription())
@@ -94,42 +93,54 @@ class TaskControllerTest {
 
     @Test
     public void testCreate() throws Exception {
+        var data = generateTask();
+
         var request = post("/tasks")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(om.writeValueAsString(task));
+                .content(om.writeValueAsString(data));
 
         mockMvc.perform(request)
                 .andExpect(status().isCreated());
 
-        var newTask = taskRepository.findById(task.getId()).get();
-        assertThat(newTask.getDescription()).isEqualTo(task.getDescription());
-        assertThat(newTask.getTitle()).isEqualTo(task.getTitle());
+        var task = taskRepository.findByTitle(data.getTitle()).get();
+
+        assertThat(task).isNotNull();
+        assertThat(task.getDescription()).isEqualTo(data.getDescription());
+        assertThat(task.getTitle()).isEqualTo(data.getTitle());
     }
 
     @Test
     public void testDelete() throws Exception {
-        mockMvc.perform(delete("/tasks/" + task.getId()))
+        var task = generateTask();
+        taskRepository.save(task);
+
+        mockMvc.perform(delete("/tasks/{id}", task.getId()))
                 .andExpect(status().isOk());
 
-        assertThat(taskRepository.findById(task.getId())).isEmpty();
+        task = taskRepository.findById(task.getId()).orElse(null);
+        assertThat(task).isNull();
     }
 
     @Test
     public void testUpdate() throws Exception {
-        Map<String, String> data = new HashMap<>();
-        data.put("title", "new_title");
-        data.put("description", "new_description");
+        var task = generateTask();
+        taskRepository.save(task);
 
-        var request = put("/tasks/" + task.getId())
+        Map<String, String> data = new HashMap<>();
+        data.put("title", "new title");
+        data.put("description", "new description");
+
+        var request = put("/tasks/{id}", task.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(data));
 
         mockMvc.perform(request)
                 .andExpect(status().isOk());
 
-        var updatedTask = taskRepository.findById(task.getId()).get();
-        assertThat(updatedTask.getTitle()).isEqualTo("new_title");
-        assertThat(updatedTask.getDescription()).isEqualTo("new_description");
+        task = taskRepository.findById(task.getId()).get();
+
+        assertThat(task.getTitle()).isEqualTo(data.get("title"));
+        assertThat(task.getDescription()).isEqualTo(data.get("description"));
     }
     // END
 }
