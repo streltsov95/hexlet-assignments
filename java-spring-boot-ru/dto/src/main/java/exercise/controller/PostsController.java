@@ -1,7 +1,6 @@
 package exercise.controller;
 
 import exercise.exception.ResourceNotFoundException;
-import exercise.model.Comment;
 import exercise.repository.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +20,32 @@ import exercise.dto.CommentDTO;
 @RequestMapping("/posts")
 public class PostsController {
 
-    private PostDTO postToDTO(Post post) {
+    @Autowired
+    private PostRepository postRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
+    @GetMapping(path = "")
+    public List<PostDTO> index() {
+        var posts = postRepository.findAll();
+
+        var result = posts.stream()
+                .map(this::toPostDTO)
+                .toList();
+
+        return result;
+    }
+
+    @GetMapping(path = "/{id}")
+    public PostDTO show(@PathVariable long id) {
+        var post = postRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Post with id " + id + " not found"));
+
+        return toPostDTO(post);
+    }
+
+    private PostDTO toPostDTO(Post post) {
         var postDTO = new PostDTO();
 
         postDTO.setId(post.getId());
@@ -29,47 +53,19 @@ public class PostsController {
         postDTO.setBody(post.getBody());
 
         var comments = commentRepository.findByPostId(post.getId());
+
         var commentsDTO = comments.stream()
-                .map(this::commentToDTO)
+                .map(comment -> {
+                    var commentDTO = new CommentDTO();
+                    commentDTO.setId(comment.getId());
+                    commentDTO.setBody(comment.getBody());
+                    return commentDTO;
+                })
                 .toList();
 
         postDTO.setComments(commentsDTO);
 
         return postDTO;
-    }
-
-    private CommentDTO commentToDTO(Comment comment) {
-        var dto = new CommentDTO();
-
-        dto.setId(comment.getId());
-        dto.setBody(comment.getBody());
-
-        return dto;
-    }
-
-    @Autowired
-    private PostRepository postRepository;
-
-    @Autowired
-    private CommentRepository commentRepository;
-
-    @GetMapping
-    public List<PostDTO> index() {
-        var posts = postRepository.findAll();
-
-        var dto = posts.stream()
-                .map(this::postToDTO)
-                .toList();
-
-        return dto;
-    }
-
-    @GetMapping("/{id}")
-    public PostDTO show(@PathVariable Long id) {
-        var post = postRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Post with id " + id + " not found"));
-
-        return postToDTO(post);
     }
 }
 // END
