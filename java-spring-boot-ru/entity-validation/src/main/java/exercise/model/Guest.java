@@ -37,10 +37,10 @@ public class Guest {
     @NotBlank
     private String name;
 
-    @Column(unique = true)
     @Email
     private String email;
 
+    @Column(unique = true)
     @Pattern(regexp = "\\+[0-9]{11,13}")
     private String phoneNumber;
 
