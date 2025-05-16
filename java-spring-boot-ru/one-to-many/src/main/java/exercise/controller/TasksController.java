@@ -30,13 +30,14 @@ public class TasksController {
     @Autowired
     private TaskRepository taskRepository;
 
-    @Autowired UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private TaskMapper taskMapper;
 
     @GetMapping(path = "")
-    public List<TaskDTO> index() {
+    List<TaskDTO> index() {
         var tasks = taskRepository.findAll();
         return tasks.stream()
                 .map(task -> taskMapper.map(task))
@@ -44,7 +45,8 @@ public class TasksController {
     }
 
     @GetMapping(path = "/{id}")
-    public TaskDTO show(@PathVariable long id) {
+    @ResponseStatus(HttpStatus.OK)
+    TaskDTO show(@PathVariable long id) {
         var task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task with id " + id + " not found"));
         return taskMapper.map(task);
@@ -52,28 +54,34 @@ public class TasksController {
 
     @PostMapping(path = "")
     @ResponseStatus(HttpStatus.CREATED)
-    public TaskDTO create(@Valid @RequestBody TaskCreateDTO taskData) {
+    TaskDTO create(@Valid @RequestBody TaskCreateDTO taskData) {
         var task = taskMapper.map(taskData);
+        var user = userRepository.findById(taskData.getAssigneeId())
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User with id " + taskData.getAssigneeId() + " not found"
+                ));
+        task.setAssignee(user);
         taskRepository.save(task);
         return taskMapper.map(task);
     }
 
     @PutMapping(path = "/{id}")
-    public TaskDTO update(@Valid @RequestBody TaskUpdateDTO taskData, @PathVariable long id) {
+    @ResponseStatus(HttpStatus.OK)
+    TaskDTO update(@Valid @RequestBody TaskUpdateDTO taskData, @PathVariable long id) {
         var task = taskRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Task with id " + id + " not found"));
-        taskMapper.update(taskData, task);
-        var assignee = userRepository.findById(taskData.getAssigneeId())
+        var user = userRepository.findById(taskData.getAssigneeId())
                         .orElseThrow(() -> new ResourceNotFoundException(
                                 "User with id " + taskData.getAssigneeId() + " not found"));
-        task.setAssignee(assignee);
+        taskMapper.update(taskData, task);
+        task.setAssignee(user);
         taskRepository.save(task);
         return taskMapper.map(task);
     }
 
     @DeleteMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void destroy(@PathVariable long id) {
+    void destroy(@PathVariable long id) {
         taskRepository.deleteById(id);
     }
     // END
