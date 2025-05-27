@@ -29,29 +29,29 @@ public class AuthorsController {
     // BEGIN
     @GetMapping("")
     public List<AuthorDTO> index() {
-        return authorService.getAll();
+        return authorService.getAllAuthors();
     }
 
     @GetMapping("/{id}")
     public AuthorDTO show(@PathVariable Long id) {
-        return authorService.findById(id);
+        return authorService.getAuthorById(id);
     }
 
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public AuthorDTO create(@RequestBody @Valid AuthorCreateDTO authorData) {
-        return authorService.create(authorData);
+        return authorService.createAuthor(authorData);
     }
 
     @PutMapping("/{id}")
     public AuthorDTO update(@RequestBody @Valid AuthorUpdateDTO authorData, @PathVariable Long id) {
-        return authorService.update(authorData, id);
+        return authorService.updateAuthor(authorData, id);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable Long id) {
-        authorService.delete(id);
+        authorService.deleteAuthor(id);
     }
     // END
 }

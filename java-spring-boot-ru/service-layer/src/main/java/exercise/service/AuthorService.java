@@ -15,40 +15,40 @@ import java.util.List;
 public class AuthorService {
     // BEGIN
     @Autowired
-    private AuthorRepository repository;
+    private AuthorRepository authorRepository;
 
     @Autowired
     private AuthorMapper authorMapper;
 
-    public List<AuthorDTO> getAll() {
-        var authors = repository.findAll();
+    public List<AuthorDTO> getAllAuthors() {
+        var authors = authorRepository.findAll();
         return authors.stream()
                 .map(authorMapper::map)
                 .toList();
     }
 
-    public AuthorDTO create(AuthorCreateDTO authorData) {
+    public AuthorDTO createAuthor(AuthorCreateDTO authorData) {
         var author = authorMapper.map(authorData);
-        repository.save(author);
+        authorRepository.save(author);
         return authorMapper.map(author);
     }
 
-    public AuthorDTO findById(Long id) {
-        var author = repository.findById(id)
+    public AuthorDTO getAuthorById(Long id) {
+        var author = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Author with id " + id + " not found"));
         return authorMapper.map(author);
     }
 
-    public AuthorDTO update(AuthorUpdateDTO authorData, Long id) {
-        var author = repository.findById(id)
+    public AuthorDTO updateAuthor(AuthorUpdateDTO authorData, Long id) {
+        var author = authorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Author with id " + id + " not found"));
         authorMapper.update(authorData, author);
-        repository.save(author);
+        authorRepository.save(author);
         return authorMapper.map(author);
     }
 
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public void deleteAuthor(Long id) {
+        authorRepository.deleteById(id);
     }
     // END
 }
